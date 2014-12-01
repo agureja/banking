@@ -6,10 +6,16 @@ public class Acceptor extends Process {
 	private ProposalId promise;
 	private ProposalId acceptedID;
 	
-	public Acceptor(UUID processUid) {
+	public Acceptor(int processUid) {
 		super(processUid);
 		promise= new ProposalId(processUid);
 		value = 0;
+	}
+	
+	public void reset() {
+		
+		promise.reset();
+		acceptedID.reset();
 	}
 	
 	public void receivePrepare(ProposalId proposal) {
@@ -17,11 +23,11 @@ public class Acceptor extends Process {
 		if (promise.CompareTo(proposal)<0) {
 			promise.setNumber(proposal.getNumber());
 			promise.setUniqueId(proposal.getUniqueId());
-			Message.sendPromise(proposal, acceptedID, value);
+			NetworkSender.sendPromise(proposal, acceptedID, value);
 		}
 	}
 
-	public void receiveAcceptRequest(UUID uniqueId,ProposalId proposal,	int value) {
+	public void receiveAcceptRequest(int uniqueId,ProposalId proposal,	int value) {
 		
 		if (proposal.CompareTo(promise)>0) {
 			promise.setNumber(proposal.getNumber());
@@ -32,7 +38,7 @@ public class Acceptor extends Process {
 			
 			this.value = value;
 			
-			Message.sendAccepted(acceptedID, this.value);
+			NetworkSender.sendAccepted(acceptedID, this.value);
 		}
 	}
 

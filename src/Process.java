@@ -2,16 +2,16 @@ import java.util.UUID;
 
 
 public class Process {
-	private static UUID processUid;
+	private static int processUid;
 	protected int value;
 	protected int quorumSize;
 	
-	public Process(UUID pId) {
+	public Process(int pId) {
 		processUid = pId;
 		quorumSize = 3;
 	}
 	
-	public UUID getUniqueId() {
+	public int getUniqueId() {
 		
 		return processUid;
 	}

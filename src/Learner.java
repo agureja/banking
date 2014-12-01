@@ -6,13 +6,17 @@ public class Learner extends Process {
 
 	HashMap<Integer,Integer> acceptedValues;
 	
-	public Learner(UUID processUid) {
+	public Learner(int processUid) {
 		super(processUid);
 		acceptedValues = new HashMap<Integer, Integer>();
 		value=0;
 	}
 	
-	public void receiveAcceptRequest(UUID uniqueId,ProposalId proposal,	int value) {
+	public void reset() {
+		value = 0;
+		acceptedValues.clear();
+	}
+	public void receiveAcceptRequest(int uniqueId,ProposalId proposal,	int value) {
 		
 		if(acceptedValues.containsKey(value)){
 			acceptedValues.put(value, acceptedValues.get(value)+1);

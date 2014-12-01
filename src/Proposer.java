@@ -6,22 +6,29 @@ import java.util.UUID;
 public class Proposer extends Process {
 
 	ProposalId propId;
-	ProposalId prevId;
+	ProposalId prevIDAcceptedByProposer;
 	
-	Set<UUID> promiseList;
+	Set<Integer> promiseList;
 	
-	public Proposer(UUID processUid) {
+	public Proposer(int processUid) {
 		super(processUid);
 		propId = new ProposalId(processUid); 
 		value = 0;
-		promiseList = new HashSet<UUID>(); 
+		//list of user accepting the promise.
+		promiseList = new HashSet<Integer>(); 
+	}
+	
+	public void reset() {
+		propId.reset();
+		prevIDAcceptedByProposer.reset();
+		value = 0;
 	}
 	
 	public boolean sendPrepare(int value) {
 		
 		promiseList.clear();
-		propId.setNumber(propId.getNumber()+1);
-		Message.sendPrepare(propId);
+		propId.setNumber(propId.getNumber()+1); // counter*n+1
+		NetworkSender.sendPrepare(propId);
 		return true;
 	}
 	
@@ -29,24 +36,22 @@ public class Proposer extends Process {
 		this.value = value;
 	}
 	
-	public boolean recievePromise(UUID uuid, ProposalId propId, ProposalId prevPropId, int value) {
+	public boolean recievePromise(Integer uuid, ProposalId propId, ProposalId prevAcceptedByAcceptor, int value) {
 		
 		
-		if(prevId == null) {
+		if(prevIDAcceptedByProposer == null) {
 			
-			prevId = new ProposalId(prevPropId.getUniqueId(),prevPropId.getNumber());
+			prevIDAcceptedByProposer = new ProposalId(prevAcceptedByAcceptor.getUniqueId(),prevAcceptedByAcceptor.getNumber());
 		}
-		else if(prevId.CompareTo(prevPropId)<0) {
+		else if(prevIDAcceptedByProposer.CompareTo(prevAcceptedByAcceptor)<0) {
 			
-			prevId.setUniqueId(prevPropId.getUniqueId());
-			prevId.setNumber(prevPropId.getNumber());
+			prevIDAcceptedByProposer.setUniqueId(prevAcceptedByAcceptor.getUniqueId());
+			prevIDAcceptedByProposer.setNumber(prevAcceptedByAcceptor.getNumber());
 			this.value = value;
-		} else {
-			
-			promiseList.add(uuid);
 		}
-		if(promiseList.size() > quorumSize)
-			Message.sendAccept(propId, value);
+		promiseList.add(uuid);
+		if(promiseList.size() >= quorumSize)
+			NetworkSender.sendAccept(propId, value);
 		return true;
 	}
 	

@@ -1,27 +1,27 @@
-import java.util.UUID;
-
-
 
 public class ProposalId {
 
 	private int number;
-	private UUID uniqueId;
-	public ProposalId(UUID uniqueId) {
+	private int uniqueId;
+	public ProposalId(int uniqueId) {
 		  
 		this.uniqueId = uniqueId;
 		this.number = 0;
 	}
-	public ProposalId(UUID uniqueId, int number) {
+	public void reset() {
+		this.number = 0;
+	}
+	public ProposalId(int uniqueId, int number) {
 		  
 		this.uniqueId = uniqueId;
 		this.number = number;
 	}
-	public UUID getUniqueId() {
+	public int getUniqueId() {
 		return uniqueId;
 	}
 	
-	public void setUniqueId(UUID uuid) {
-		this.uniqueId = uuid;
+	public void setUniqueId(int id) {
+		this.uniqueId = id;
 	}
 	
 	public void setNumber(int value) {
@@ -41,7 +41,7 @@ public class ProposalId {
 			return -1;
 		else if (this.number == temp.number) {
 		
-			if(uniqueId.equals(temp.getUniqueId()))
+			if(uniqueId == temp.getUniqueId())
 					return 1;
 			else 
 				return -1;
